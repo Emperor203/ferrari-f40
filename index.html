@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ferrari F40 LB-Works | Liberty Walk 3D Interactive Showcase</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏎️</text></svg>">
+  <link rel="stylesheet" href="style.css?v=1.0.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "./libs/three/three.module.js",
+        "three/addons/": "./libs/three/"
+      }
+    }
+  </script>
+</head>
+<body class="dark-studio">
+
+  <!-- Loading Screen -->
+  <div id="loader-screen">
+    <div class="loader-content">
+      <div class="loader-emblem">🏎️</div>
+      <h1 class="loader-title">FERRARI F40 LB-WORKS</h1>
+      <p class="loader-subtitle">LIBERTY WALK JAPAN &bull; TWIN-TURBO V8 WIDEBODY</p>
+      
+      <div class="progress-bar-container">
+        <div class="progress-bar-fill" id="progress-fill"></div>
+      </div>
+      <div class="loader-stats">
+        <span id="load-status-text">Инициализация 3D сцены...</span>
+        <span id="load-percent-text">0%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- WebGL 3D Canvas -->
+  <div id="webgl-container"></div>
+
+  <!-- Application User Interface -->
+  <div id="ui-root">
+    
+    <!-- Top Global Header -->
+    <header class="app-header">
+      <div class="brand-block">
+        <div class="brand-trident">🏎️</div>
+        <div class="brand-titles">
+          <h1 class="car-title">FERRARI F40 LB-WORKS</h1>
+          <span class="car-subtitle">LIBERTY WALK WIDEBODY &bull; 2.9L TWIN-TURBO V8 &bull; 710+ HP</span>
+        </div>
+      </div>
+
+      <!-- Center Environment Selector -->
+      <div class="center-env-selector" id="env-selector-group">
+        <span class="i18n-lighting">ОСВЕЩЕНИЕ:</span>
+      </div>
+      <div style="display: flex; gap: 8px;">
+        <button class="env-mode-btn" data-env="white-studio" id="btn-env-white" title="Белый студийный фон">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <span class="i18n-env-studio">Белый Шоурум</span>
+        </button>
+        <button class="env-mode-btn active" data-env="dark-studio" id="btn-env-dark" title="Черный студийный фон">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          <span class="i18n-env-monza">Черный Шоурум</span>
+        </button>
+      </div>
+
+      <!-- Right Header Actions -->
+      <div class="header-actions">
+        <button class="action-icon-btn active" id="btn-theme-toggle" title="Переключить на белый фон [B]">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20z" fill="currentColor"/></svg>
+        </button>
+        <button class="action-icon-btn" id="btn-zen-mode" title="Чистый экран — скрыть все элементы меню [U]">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+        </button>
+        <button class="action-icon-btn" id="btn-sound-toggle" title="Звук Twin-Turbo V8 (вкл/выкл) [M]">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="sound-icon-svg"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+        </button>
+        <button class="action-icon-btn" id="btn-specs" title="Технические характеристики">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        </button>
+        <button class="action-icon-btn" id="btn-lang-toggle" title="Сменить язык (RU / EN)">RU</button>
+      </div>
+    </header>
+
+    <!-- Floating Top Hint Pill -->
+    <div class="top-hint-pill">
+      <span>Перетаскивайте для вращения &bull; Колесико мыши для приближения</span>
+    </div>
+
+    <!-- Bottom Controls Deck -->
+    <footer class="app-footer">
+      
+      <!-- Quick Interactive Toggles -->
+      <div class="quick-actions-row">
+        <button class="toggle-pill-btn active" id="btn-toggle-bg" title="Переключить фон: Белый / Черный [B]">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20z" fill="currentColor"/></svg>
+          <span id="label-bg-toggle">Фон: Черный</span>
+        </button>
+        <button class="toggle-pill-btn" id="btn-open-paint" title="Выбрать цвет кузова">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C22 6.5 17.5 2 12 2z"/></svg>
+          <span class="i18n-paint-btn">Палитра</span>
+        </button>
+        <button class="toggle-pill-btn" id="btn-toggle-lights" title="Включить фары и оптику [L]">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          <span id="label-lights-status" class="i18n-lights-btn">Фары: Выкл</span>
+        </button>
+        <button class="toggle-pill-btn" id="btn-engine-rev" title="Перегазовка Twin-Turbo V8 [Space]">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>
+          <span class="i18n-engine-rev">Запуск Twin-Turbo</span>
+        </button>
+      </div>
+
+      <!-- Navigation & Camera Presets Deck -->
+      <div class="bottom-nav-bar">
+        <div class="nav-cluster camera-presets">
+          <button class="cam-angle-btn active" data-preset="hero" title="Ракурс 3/4">3/4 Ракурс</button>
+          <button class="cam-angle-btn" data-preset="side" title="Профиль (вид сбоку)">Профиль</button>
+          <button class="cam-angle-btn" data-preset="front" title="Вид спереди">Спереди</button>
+          <button class="cam-angle-btn" data-preset="rear" title="Вид сзади (крыло LBWK)">Корма</button>
+          <button class="cam-angle-btn" data-preset="top" title="Вид сверху">Сверху</button>
+          <button class="cam-angle-btn" data-preset="engine" title="Моторный отсек Twin-Turbo">Двигатель</button>
+        </div>
+
+        <div class="nav-cluster mode-toggles">
+          <button class="action-btn" id="nav-btn-autorotate" title="Плавное авто-вращение [R]">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+            <span class="i18n-autorotate">Вращение</span>
+          </button>
+          <button class="action-btn" id="nav-btn-tour" title="Кинематографический тур по автомобилю [T]">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <span class="i18n-cinematic">Кино-тур</span>
+          </button>
+          <button class="action-btn" id="nav-btn-screenshot" title="Сохранить красивый скриншот в 4K [P]">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            <span class="i18n-photo">Фото HD</span>
+          </button>
+          <button class="action-btn" id="nav-btn-reset" title="Сброс ракурса камеры">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+            <span class="i18n-reset">Сброс</span>
+          </button>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Paint Customizer Modal / Drawer -->
+    <div class="customizer-panel hidden" id="paint-customizer">
+      <div class="panel-header">
+        <div class="panel-title-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C22 6.5 17.5 2 12 2z"/></svg>
+          <h3 class="panel-title i18n-paint-title">ЦВЕТ КУЗОВА</h3>
+        </div>
+        <button class="btn-close-panel" id="btn-close-paint">&times;</button>
+      </div>
+
+      <!-- Color Swatches Grid -->
+      <div class="swatches-grid" id="paint-swatches"></div>
+
+      <!-- Finish Type Selection -->
+      <div class="finish-selector">
+        <span class="finish-title i18n-finish-title">ТИП ПОКРЫТИЯ:</span>
+        <div class="finish-btns">
+          <button class="finish-btn active" data-finish="gloss">Глянец</button>
+          <button class="finish-btn" data-finish="metallic">Металлик</button>
+          <button class="finish-btn" data-finish="satin">Матовый Сатин</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Technical Specifications Drawer -->
+    <div class="specs-drawer" id="specs-drawer">
+      <div class="drawer-close-bar">
+        <h3 class="drawer-title i18n-specs-title">СПЕЦИФИКАЦИЯ МОДЕЛИ</h3>
+        <button class="btn-close-panel" id="btn-close-specs">&times;</button>
+      </div>
+
+      <div class="specs-hero-meta">
+        <h2 class="specs-car-name">Ferrari F40 LB-Works</h2>
+        <span class="specs-badge">Liberty Walk Japan &bull; Limited Build</span>
+      </div>
+
+      <div class="specs-category">
+        <h4 class="specs-cat-header i18n-specs-engine">СИЛОВАЯ УСТАНОВКА</h4>
+        <div class="spec-row"><span class="spec-k i18n-spec-enginetype">Двигатель:</span><span class="spec-v">90&deg; V8 Tipo F120A, Twin-Turbo DOHC 32V</span></div>
+        <div class="spec-row"><span class="spec-k i18n-spec-displacement">Рабочий объем:</span><span class="spec-v">2936 куб. см (2.9 л)</span></div>
+        <div class="spec-row"><span class="spec-k i18n-spec-turbos">Турбонаддув:</span><span class="spec-v">Двойные турбины IHI с интеркулерами Behr</span></div>
+        <div class="spec-row"><span class="spec-k i18n-spec-power">Мощность:</span><span class="spec-v highlight-val">710+ л.с. @ 7500 об/мин (LBWK Tuned)</span></div>
+        <div class="spec-row"><span class="spec-k i18n-spec-torque">Крутящий момент:</span><span class="spec-v">780 Н&middot;м @ 4200 об/мин</span></div>
+        <div class="spec-row"><span class="spec-k i18n-spec-trans">Трансмиссия:</span><span class="spec-v">5-ступенчатая кулачковая с открытой кулисой</span></div>
+      </div>
+
+      <div class="specs-category">
+        <h4 class="specs-cat-header i18n-specs-chassis">ШАССИ И LBWK АЭРОДИНАМИКА</h4>
+        <div class="spec-row"><span class="spec-k i18n-spec-body">Обвес:</span><span class="spec-v">LB-Works Widebody Kit (Wataru Kato)</span></div>
+        <div class="spec-row"><span class="spec-k i18n-spec-structure">Конструкция:</span><span class="spec-v">Кевларово-углепластиковый монокок + трубчатая рама</span></div>
+        <div class="spec-row"><span class="spec-k i18n-spec-brakes">Тормоза:</span><span class="spec-v">Brembo Big Brake Kit с перфорированными дисками</span></div>
+        <div class="spec-row"><span class="spec-k i18n-spec-susp">Подвеска:</span><span class="spec-v">AirREX Digital Air Suspension (регулируемый клиренс)</span></div>
+        <div class="spec-row"><span class="spec-k i18n-spec-wheels">Колеса:</span><span class="spec-v">Кованые диски LBWK Custom Deep-Dish 18"</span></div>
+      </div>
+
+      <div class="specs-category">
+        <h4 class="specs-cat-header i18n-specs-perf">ДИНАМИЧЕСКИЕ ПОКАЗАТЕЛИ</h4>
+        <div class="spec-row"><span class="spec-k i18n-spec-topspd">Максимальная скорость:</span><span class="spec-v highlight-val">368 км/ч</span></div>
+        <div class="spec-row"><span class="spec-k i18n-spec-accel">Разгон 0-100 км/ч:</span><span class="spec-v">~ 3.1 секунды</span></div>
+        <div class="spec-row"><span class="spec-k i18n-spec-weight">Сухая масса:</span><span class="spec-v">1180 кг</span></div>
+        <div class="spec-row"><span class="spec-k i18n-spec-powerweight">Удельная мощность:</span><span class="spec-v">600+ л.с. / тонну</span></div>
+      </div>
+
+      <div class="specs-history">
+        <h4 class="specs-cat-header i18n-specs-history">ИСТОРИЧЕСКАЯ СПРАВКА</h4>
+        <p class="specs-hist-p i18n-specs-histtext">
+          Легендарный проект японского ателье Liberty Walk под руководством Ватару Като (Wataru Kato), впервые представленный на Tokyo Auto Salon. Классический суперкар Ferrari F40 получил фирменное расширение кузова с болтовыми накладками крыльев, кастомный карбоновый сплиттер, монументальное антикрыло в стиле LM и спортивную пневмоподвеску AirREX.
+        </p>
+      </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div class="toast-popup" id="toast-notify"></div>
+  </div>
+
+  <!-- Main JavaScript Application -->
+  <script type="module" src="js/app.js?v=1.0.0"></script>
+</body>
+</html>
