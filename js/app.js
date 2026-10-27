@@ -244,11 +244,11 @@ function init() {
 function setupLighting() {
   const isDark = (state.currentBgTheme === 'black');
 
-  ambientLight = new THREE.AmbientLight(0xffffff, isDark ? 1.15 : 1.05);
+  ambientLight = new THREE.AmbientLight(0xfff4f0, isDark ? 0.90 : 0.85);
   scene.add(ambientLight);
 
   // Key Top-Front Directional Light
-  dirLight = new THREE.DirectionalLight(0xffffff, isDark ? 1.85 : 1.5);
+  dirLight = new THREE.DirectionalLight(0xfffaf0, isDark ? 1.55 : 1.35);
   dirLight.position.set(3.5, 7.5, 3.5);
   dirLight.castShadow = true;
   dirLight.shadow.mapSize.width = 2048;
@@ -264,13 +264,13 @@ function setupLighting() {
   scene.add(dirLight);
 
   // Left Softbox Fill Light
-  rimLightL = new THREE.DirectionalLight(0xffffff, isDark ? 1.0 : 0.75);
-  rimLightL.position.set(-6, 6, -3);
+  rimLightL = new THREE.DirectionalLight(0xffffff, isDark ? 0.80 : 0.65);
+  rimLightL.position.set(-6, 5, -2);
   scene.add(rimLightL);
 
-  // Front Key Softbox Light
-  rimLightR = new THREE.DirectionalLight(0xffffff, isDark ? 0.85 : 0.65);
-  rimLightR.position.set(0, 3.5, 6.5);
+  // Right Rear Rim Light
+  rimLightR = new THREE.DirectionalLight(0xfff0ea, isDark ? 0.70 : 0.55);
+  rimLightR.position.set(5, 5, -4);
   scene.add(rimLightR);
 
   // Headlight Spotlights (Forward beams on ground)
@@ -485,18 +485,18 @@ function loadFerrariModel() {
             // Body paint materials
             if (matName === 'paint' || matName.includes('paint') || nodeName.includes('paint')) {
               if (!sharedBodyMat) {
-                // Rosso Corsa Lacquer: rich red, sharp glints, no milky white haze
+                // Rosso Corsa Lacquer: deep vibrant red, smooth gloss, no harsh laser beam
                 sharedBodyMat = new THREE.MeshPhysicalMaterial({
                   map: mat.map,
                   normalMap: mat.normalMap,
                   color: new THREE.Color(0xd40000), // Ferrari Rosso Corsa
-                  roughness: 0.28,
-                  metalness: 0.02,
-                  clearcoat: 0.75,
-                  clearcoatRoughness: 0.035,
+                  roughness: 0.16,
+                  metalness: 0.0,
+                  clearcoat: 0.70,
+                  clearcoatRoughness: 0.18,
                   ior: 1.45,
                   reflectivity: 0.5,
-                  envMapIntensity: 0.65
+                  envMapIntensity: 0.55
                 });
                 bodyMaterials.push(sharedBodyMat);
               }
@@ -562,13 +562,6 @@ function loadFerrariModel() {
         }
       });
 
-      // Internal nose baffle: prevents see-through front air ducts showing floor
-      const noseBaffleGeo = new THREE.PlaneGeometry(1.6, 0.45);
-      const noseBaffleMat = new THREE.MeshBasicMaterial({ color: 0x05070a, side: THREE.DoubleSide });
-      const noseBaffle = new THREE.Mesh(noseBaffleGeo, noseBaffleMat);
-      noseBaffle.position.set(0, 0.38, 1.70);
-      carModel.add(noseBaffle);
-
       scene.add(carModel);
 
       // Hide loading screen smoothly
@@ -623,24 +616,24 @@ function setPaintFinish(finish) {
   state.currentFinish = finish;
   bodyMaterials.forEach((mat) => {
     if (finish === 'gloss') {
-      mat.roughness = 0.28;
-      mat.metalness = 0.02;
-      mat.clearcoat = 0.75;
-      mat.clearcoatRoughness = 0.035;
+      mat.roughness = 0.16;
+      mat.metalness = 0.0;
+      mat.clearcoat = 0.70;
+      mat.clearcoatRoughness = 0.18;
+      mat.ior = 1.45;
+      mat.envMapIntensity = 0.55;
+    } else if (finish === 'metallic') {
+      mat.roughness = 0.20;
+      mat.metalness = 0.55;
+      mat.clearcoat = 0.70;
+      mat.clearcoatRoughness = 0.18;
       mat.ior = 1.45;
       mat.envMapIntensity = 0.65;
-    } else if (finish === 'metallic') {
-      mat.roughness = 0.25;
-      mat.metalness = 0.60;
-      mat.clearcoat = 0.75;
-      mat.clearcoatRoughness = 0.05;
-      mat.ior = 1.45;
-      mat.envMapIntensity = 0.70;
     } else if (finish === 'satin') {
-      mat.roughness = 0.50;
+      mat.roughness = 0.48;
       mat.metalness = 0.10;
       mat.clearcoat = 0.15;
-      mat.clearcoatRoughness = 0.30;
+      mat.clearcoatRoughness = 0.35;
       mat.ior = 1.45;
       mat.envMapIntensity = 0.45;
     }
@@ -674,10 +667,10 @@ function setBgTheme(theme) {
     if (shadowPlaneMat) shadowPlaneMat.opacity = 0.16;
     if (contactShadowMesh) contactShadowMesh.material.opacity = 0.75;
 
-    ambientLight.intensity = 1.05;
-    dirLight.intensity = 1.5;
-    rimLightL.intensity = 0.75;
-    rimLightR.intensity = 0.65;
+    ambientLight.intensity = 0.85;
+    dirLight.intensity = 1.35;
+    rimLightL.intensity = 0.65;
+    rimLightR.intensity = 0.55;
     if (renderer) renderer.toneMappingExposure = 1.0;
     document.body.classList.remove('dark-studio');
   } else {
@@ -686,10 +679,10 @@ function setBgTheme(theme) {
     if (shadowPlaneMat) shadowPlaneMat.opacity = 0.55;
     if (contactShadowMesh) contactShadowMesh.material.opacity = 0.88;
 
-    ambientLight.intensity = 1.15;
-    dirLight.intensity = 1.85;
-    rimLightL.intensity = 1.0;
-    rimLightR.intensity = 0.85;
+    ambientLight.intensity = 0.90;
+    dirLight.intensity = 1.55;
+    rimLightL.intensity = 0.80;
+    rimLightR.intensity = 0.70;
     if (renderer) renderer.toneMappingExposure = 1.10;
     document.body.classList.add('dark-studio');
   }
