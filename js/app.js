@@ -142,7 +142,8 @@ const cameraPresets = {
   front: { pos: new THREE.Vector3(0.0, 0.8, 4.5), look: new THREE.Vector3(0, 0.45, 0.2) },
   rear: { pos: new THREE.Vector3(0.0, 1.2, -4.6), look: new THREE.Vector3(0, 0.55, -0.4) },
   top: { pos: new THREE.Vector3(0.01, 6.2, 0.01), look: new THREE.Vector3(0, 0.35, 0) },
-  engine: { pos: new THREE.Vector3(1.2, 1.8, -1.2), look: new THREE.Vector3(0, 0.6, -0.8) }
+  engine: { pos: new THREE.Vector3(1.2, 1.8, -1.2), look: new THREE.Vector3(0, 0.6, -0.8) },
+  interior: { pos: new THREE.Vector3(-0.30, 0.72, -0.15), look: new THREE.Vector3(-0.30, 0.62, 0.35) }
 };
 
 // Cinematic Tour Waypoints
@@ -169,7 +170,7 @@ function init() {
   scene.background = new THREE.Color(0x0a0c10); // Black Studio Default
 
   // 2. Camera Setup
-  camera = new THREE.PerspectiveCamera(38, window.innerWidth / window.innerHeight, 0.1, 100);
+  camera = new THREE.PerspectiveCamera(38, window.innerWidth / window.innerHeight, 0.05, 100);
   camera.position.copy(cameraPresets.hero.pos);
 
   // 3. WebGL Renderer
@@ -193,7 +194,7 @@ function init() {
   controls.enableZoom = true;
   controls.enableRotate = true;
   controls.enablePan = true;
-  controls.minDistance = 1.8;
+  controls.minDistance = 0.05;
   controls.maxDistance = 14.0;
   controls.maxPolarAngle = Math.PI / 2 - 0.02; // Never clip beneath floor
   controls.target.copy(camTargetLook);
@@ -287,6 +288,11 @@ function setupLighting() {
   scene.add(spotR.target);
 
   headlightSpotlights.push(spotL, spotR);
+
+  // Warm interior cockpit illumination
+  const cabinLight = new THREE.PointLight(0xffedd0, 0.85, 2.5);
+  cabinLight.position.set(-0.15, 0.72, 0.0);
+  scene.add(cabinLight);
 }
 
 // --- SETUP GROUND & PURE BLACK CONTACT SHADOW ---
@@ -1063,6 +1069,13 @@ function setupUIEventListeners() {
       if (target) {
         document.querySelectorAll('.cam-angle-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
+        if (presetKey === 'interior') {
+          controls.minDistance = 0.02;
+          controls.maxPolarAngle = Math.PI - 0.05;
+        } else {
+          controls.minDistance = 0.05;
+          controls.maxPolarAngle = Math.PI / 2 - 0.02;
+        }
         transitionCameraTo(target.pos, target.look);
       }
     });
